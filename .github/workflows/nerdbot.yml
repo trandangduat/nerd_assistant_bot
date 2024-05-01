@@ -1,9 +1,9 @@
 name: Run Telegram Bot
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # Runs every 6 hours
 
 jobs:
 
@@ -25,6 +25,17 @@ jobs:
         
     - name: Run Telegram Bot
       run: |
-        python nerdbot.py
+        python nerdbot.py &
+        
+    - name: Keep workflow alive
+      run: |
+        while true; do
+          sleep 5h # Sleep for 5 hours
+          echo "Keeping workflow alive..."
+        done &
+        
+    - name: Wait for background processes
+      run: |
+        wait
       env:
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
